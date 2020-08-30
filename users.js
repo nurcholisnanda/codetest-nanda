@@ -28,7 +28,7 @@ app.get("/token", (req, res) => {
 })
 
 //Create userdata
-app.post("/user", (req, res) => {
+app.post("/user", authorize(), (req, res) => {
     //this is our create func
     console.log(req.body)
     var newUser = {
@@ -48,7 +48,7 @@ app.post("/user", (req, res) => {
 })
 
 //Update userdata
-app.put("/user/:id", (req, res) => {
+app.put("/user/:id", authorize(), (req, res) => {
     //this is our create func
     console.log(req.body)
     var changedUser = {
@@ -68,7 +68,7 @@ app.put("/user/:id", (req, res) => {
 })
 
 //Get all userdatas
-app.get("/users", (req,res) => {
+app.get("/users", authorize(), async (req,res) => {
     console.log("Success fetch from database");
     const redis_key = "users";
     const { reply } = await redis.get(redis_key);
@@ -94,7 +94,7 @@ app.get("/users", (req,res) => {
 })
 
 //Get one userdata
-app.get("/user/:id", (req, res) => {
+app.get("/user/:id", authorize(), (req, res) => {
     userdata.findById(req.params.id).then((user) => {
         if(user) {
             res.json(user)
@@ -109,7 +109,7 @@ app.get("/user/:id", (req, res) => {
 })
 
 //Get one userdata by query
-app.get("/user", (req, res) => {
+app.get("/user", authorize(), (req, res) => {
     userdata.find(
         {
             $or: [
@@ -123,7 +123,7 @@ app.get("/user", (req, res) => {
 });
 
 //Delete one userdata
-app.delete("/user/:id", (req, res) => {
+app.delete("/user/:id", authorize(), (req, res) => {
     userdata.findByIdAndRemove(req.params.id).then(() => {
         res.send("User successfully removed!")
     }).catch(err => {
