@@ -1,5 +1,7 @@
 const express = require("express");
 const jwt = require("jsonwebtoken");
+
+const redis = require("./redis");
 const authorize = require("./authorization")
 let port = process.env.PORT || 3000;
 
@@ -24,7 +26,6 @@ app.get("/token", (req, res) => {
     const token = jwt.sign(payload, "secret key");
     res.send(token);
 })
-
 
 //Create userdata
 app.post("/user", authorize(), (req, res) => {
@@ -68,14 +69,28 @@ app.put("/user/:id", authorize(), (req, res) => {
 
 //Get all userdatas
 app.get("/users", authorize(), (req,res) => {
-    userdata.find().then((userdatas) => {
-        console.log(userdatas)
-        res.json(userdatas)
-    }).catch(err => {
-        if(err) {
-            res.status(err.status).send(err);
-        }
-    })
+    console.log("Success fetch from database");
+    const redis_key = "users";
+    const { reply } = await redis.get(redis_key);
+
+    if (reply) {
+        res.status(200).send(reply);
+    } else {
+        userdata.find().then((userdatas) => {
+            console.log(userdatas)
+            const dataFromDB = {
+                success : true,
+                message : "success fetch data",
+                data : userdatas,
+            };
+            redis.JSON.set(redis_key, JSON.stringify(dataFromDB));
+            res.status(200).send(dataFromDB);
+        }).catch(err => {
+            if(err) {
+                res.status(err.status).send(err);
+            }
+        })
+    }
 })
 
 //Get one userdata
