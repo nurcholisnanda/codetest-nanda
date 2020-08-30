@@ -8,8 +8,7 @@
     "express": "^4.17.1",
     "ioredis": "^4.17.3",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.10.2",
-    "redis": "^3.0.2"
+    "mongoose": "^5.10.2"
   },
   "engines": {
     "node": "12.14.1"

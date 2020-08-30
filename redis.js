@@ -9,11 +9,12 @@ const redis = new Redis({
   password: '3kKhYrpc5ItTahFqAsvcJ2IhVrdDM08J'
 })
 
-/**
- * get redis cache
- * @param {string} redis_key
- */
-function get(redis_key) {
+
+  /**
+   * get redis cache
+   * @param {string} redis_key
+   */
+  function get(redis_key) {
     return new Promise((resolve) => {
       redis.get(redis_key, (err, reply) => {
         if (err) {
@@ -35,7 +36,17 @@ function get(redis_key) {
     console.log("Success Redis Set", redis_key, redis_value);
     redis.set(redis_key, redis_value);
   }
+
+  /**
+   * set redis cache
+   * @param {string} redis_key
+   */
+  function del(redis_key) {
+    redis.del(redis_key);
+    console.log("Success Redis Delete", redis_key);
+  }
   
   module.exports.get = get;
   module.exports.set = set;
+  module.exports.del = del;
   
